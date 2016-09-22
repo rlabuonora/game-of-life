@@ -33,7 +33,7 @@ class App extends Component {
 class Generation extends Component {
   render() {
       return (
-        <p>Generation: {this.props.t}</p>
+        <h3>Generation: {this.props.t}</h3>
       );
   }
 }
@@ -107,7 +107,7 @@ class Cell extends Component {
 class PlayButton extends Component {
   render() {
       return (
-        <button className="btn btn-primary">Play</button>
+        <button className="btn btn-primary"> <i className="fa fa-play" aria-hidden="true"></i></button>
       );
   }
 }
@@ -115,7 +115,7 @@ class PlayButton extends Component {
 class StopButton extends Component {
   render() {
       return (
-        <button className="btn btn-primary">Stop</button>
+        <button className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
       );
   }
 }
@@ -123,7 +123,7 @@ class StopButton extends Component {
 class ShuffleButton extends Component {
   render() {
       return (
-        <button className="btn btn-primary">Shuffle</button>
+        <button className="btn btn-primary"> <i className="fa fa-random" aria-hidden="true"></i></button>
       );
   }
 }
