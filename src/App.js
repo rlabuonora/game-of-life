@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-
-
-
-
-
 class App extends Component {
-
   constructor(props) {
     super(props);
     var initialGrid = this.createArray(this.props.cols, this.props.rows);
@@ -39,7 +33,11 @@ class App extends Component {
     }
     return a;
   }
+  handleClick(x, y) {
+    var new_data = this.toggleCell(this.state.data, x, y);
+    this.setState({ data: new_data });
 
+  }
 
   render() {
     return (
@@ -49,7 +47,7 @@ class App extends Component {
 	      <Generation t={this.state.t} />
 	    </div>
 	    <div className="row">
-                <Grid data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
+                <Grid handleClick={this.handleClick.bind(this)} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
 	    </div>
 	    <div className="row">
 		<PlayButton />
@@ -82,7 +80,9 @@ class Grid extends Component {
       var cells = [];
       this.props.data.forEach(function(row, i) {
 	  row.forEach(function(cell, j) {
-	    cells.push(<Cell live={cell} cellSize={this.props.cellSize} coords={ {x:i, y:j} } key={ i + ", " + j } />);
+	    cells.push(<Cell 
+		       handleClick={this.props.handleClick.bind(this)}
+		       live={cell} cellSize={this.props.cellSize} coords={ {x:i, y:j} } key={ i + ", " + j } />);
 	  }.bind(this));
       }.bind(this));
       var dims = this.getDims();
@@ -105,10 +105,17 @@ class Cell extends Component {
       var svg_y_pos = this.props.coords.x * this.props.cellSize
       return { x: svg_x_pos, y: svg_y_pos }
   }
+  onRectClick(event) {
+    event.preventDefault();
+    this.props.handleClick(this.props.coords.x, 
+			   this.props.coords.y);
+  }
   render() {
       var svgPos = this.getSVGPos();
       return (
-	      <rect x={ svgPos.x } 
+	      <rect 
+	            onClick={this.onRectClick.bind(this)}
+	            x={ svgPos.x } 
                     y={ svgPos.y } 
 	            width={ this.props.cellSize } 
                     height={ this.props.cellSize } 
