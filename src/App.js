@@ -4,14 +4,27 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    var initialGrid = this.createArray(this.props.cols, this.props.rows);
+    var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
     initialGrid = this.toggleCell(initialGrid, 0, 1);
     this.state = {  t: 0,
 		    on: false,
 		    data: initialGrid
                  };
   }
-
+  simulate(oldGrid) { // solves for the next grid (brute force)
+    // for every cell
+    // helper 1: get an array of the cell's neighbors
+    // helper 2: count how many of them are alive
+    // if less than 2: die
+    // if 2 or 3: survive
+    // more than three: die
+    var newGrid = [];
+    return newGrid;
+  }
+  tick() {
+    // call simulate with the current state
+    // update to the new state
+  }
   toggleCell(nested_arr, i, j) {
     return nested_arr.map(function(arr, idx) {
       if (idx !== i) return arr;
@@ -22,7 +35,7 @@ class App extends Component {
     })
   }
 
-  createArray(width, height) {
+  emptyGrid(width, height) {
     // create an array of false
     var a = new Array(height);
     for (var i = 0; i < height; i++) { 
@@ -39,7 +52,7 @@ class App extends Component {
 
   }
   stop() {
-    var initialGrid = this.createArray(this.props.cols, this.props.rows);
+    var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
     this.setState({ data: initialGrid });
   }
 
