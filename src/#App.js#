@@ -2,28 +2,42 @@ import React, { Component } from 'react';
 import './App.css';
 
 
-  // toggleCell(nested_arr, i, j) {
-  //   return nested_arr.map(function(arr, idx) {
-  //     if (idx !== i) return arr;
-  //       else return arr.map(function(cell, idx) {
-  //         if (idx !== j) return cell;
-  //         else return !cell;
-  //     });
-  //   })
-  // }
+
 
 
 class App extends Component {
 
   constructor(props) {
     super(props);
+    var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
+ 
+    initialGrid = this.toggleCell(initialGrid, 0, 0);
+    initialGrid = this.toggleCell(initialGrid, 29, 49);
+      
+
     this.state = {  t: 0,
-		    on: false,
-		    data: this.createArray(this.props.cols, this.props.rows)
-                 };
+                    on: false,
+                    data: initialGrid
+                 };  // call this.clearGrid to initialize?
+  }
+  clearGrid() { 
+    this.setState({data: this.emptyGrid(this.props.cols, this.props.rows)});
+  }
+  toggleCell(nested_arr, i, j) {
+    return nested_arr.map(function(arr, idx) {
+      if (idx !== i) return arr;
+        else return arr.map(function(cell, idx) {
+          if (idx !== j) return cell;
+          else return !cell;
+      });
+    })
+  }
+  handleClick(e) {
+    e.preventDefault();
+    console.log(e.target);
   }
 
-  createArray(width, height) {
+  emptyGrid(width, height) {
     // create an array of false
     var a = new Array(height);
     for (var i = 0; i < height; i++) { 
@@ -44,7 +58,7 @@ class App extends Component {
 	      <Generation t={this.state.t} />
 	    </div>
 	    <div className="row">
-                <Grid data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
+                <Grid onClick={this.handleClick} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
 	    </div>
 	    <div className="row">
 		<PlayButton />
@@ -77,7 +91,7 @@ class Grid extends Component {
       var cells = [];
       this.props.data.forEach(function(row, i) {
 	  row.forEach(function(cell, j) {
-	    cells.push(<Cell live={cell} cellSize={this.props.cellSize} coords={ {x:i, y:j} } key={ i + ", " + j } />);
+	    cells.push(<Cell onClick={this.props.handleClick} live={cell} cellSize={this.props.cellSize} coords={ {x:i, y:j} } key={ i + ", " + j } />);
 	  }.bind(this));
       }.bind(this));
       var dims = this.getDims();
@@ -90,6 +104,13 @@ class Grid extends Component {
 }
 
 class Cell extends Component {
+
+  componentDidMount() {
+    this.polyline.addEventListener('click', this.props.onClick);
+  }
+    componentWillUnmount(){
+        this.polyline.removeEventListener('click', this.props.onClick);
+    }
   getColor() {
       return this.props.live ? "black" : "white";
   }
@@ -103,7 +124,9 @@ class Cell extends Component {
   render() {
       var svgPos = this.getSVGPos();
       return (
-	      <rect x={ svgPos.x } 
+	      <rect  
+                    onClick={this.props.handleClick}
+	            x={ svgPos.x } 
                     y={ svgPos.y } 
 	            width={ this.props.cellSize } 
                     height={ this.props.cellSize } 

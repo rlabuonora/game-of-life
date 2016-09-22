@@ -2,15 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 
-  // toggleCell(nested_arr, i, j) {
-  //   return nested_arr.map(function(arr, idx) {
-  //     if (idx !== i) return arr;
-  //       else return arr.map(function(cell, idx) {
-  //         if (idx !== j) return cell;
-  //         else return !cell;
-  //     });
-  //   })
-  // }
+
 
 
 
@@ -18,10 +10,22 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    var initialGrid = this.createArray(this.props.cols, this.props.rows);
+    initialGrid = this.toggleCell(initialGrid, 0, 1);
     this.state = {  t: 0,
 		    on: false,
-		    data: this.createArray(this.props.cols, this.props.rows)
+		    data: initialGrid
                  };
+  }
+
+  toggleCell(nested_arr, i, j) {
+    return nested_arr.map(function(arr, idx) {
+      if (idx !== i) return arr;
+        else return arr.map(function(cell, idx) {
+          if (idx !== j) return cell;
+          else return !cell;
+      });
+    })
   }
 
   createArray(width, height) {
