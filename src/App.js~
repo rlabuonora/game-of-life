@@ -1,0 +1,19 @@
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+	    <?xml version="1.0" standalone="no"?>
+	    <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	      <rect x="10" y="10" width="25" height="25" stroke="black" fill="transparent" stroke-width="5"/>
+              <rect x="10" y="40" width="25" height="25" stroke="black" fill="transparent" stroke-width="5"/>
+	    </svg>
+      </div>
+    );
+  }
+}
+
+export default App;
