@@ -38,6 +38,10 @@ class App extends Component {
     this.setState({ data: new_data });
 
   }
+  stop() {
+    var initialGrid = this.createArray(this.props.cols, this.props.rows);
+    this.setState({ data: initialGrid });
+  }
 
   render() {
     return (
@@ -51,7 +55,7 @@ class App extends Component {
 	    </div>
 	    <div className="row">
 		<PlayButton />
-		<StopButton />
+		<StopButton stop={this.stop.bind(this)} />
 		<ShuffleButton />
 	    </div>
 	</div>
@@ -137,7 +141,7 @@ class PlayButton extends Component {
 class StopButton extends Component {
   render() {
       return (
-        <button className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
+        <button onClick={this.props.stop} className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
       );
   }
 }
