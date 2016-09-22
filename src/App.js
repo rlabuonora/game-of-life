@@ -21,9 +21,13 @@ class App extends Component {
     var newGrid = [];
     return newGrid;
   }
+
   tick() {
     // call simulate with the current state
     // update to the new state
+    console.log(this);
+    var current_t = this.state.t;
+    this.setState({ t: current_t += 1});
   }
   toggleCell(nested_arr, i, j) {
     return nested_arr.map(function(arr, idx) {
@@ -53,7 +57,14 @@ class App extends Component {
   }
   stop() {
     var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
-    this.setState({ data: initialGrid });
+    this.setState({ t: 0, 
+		    data: initialGrid });
+    clearInterval(this.state.interval);
+  }
+  start() {
+    console.log(this);
+    var interval = setInterval(this.tick.bind(this), this.props.speed);
+    this.setState({interval: interval});  
   }
 
   render() {
@@ -67,7 +78,7 @@ class App extends Component {
                 <Grid handleClick={this.handleClick.bind(this)} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
 	    </div>
 	    <div className="row">
-		<PlayButton />
+		<StartButton start={this.start.bind(this)} />
 		<StopButton stop={this.stop.bind(this)} />
 		<ShuffleButton />
 	    </div>
@@ -143,10 +154,10 @@ class Cell extends Component {
   }
 }
 
-class PlayButton extends Component {
+class StartButton extends Component {
   render() {
       return (
-        <button className="btn btn-primary"> <i className="fa fa-play" aria-hidden="true"></i></button>
+        <button onClick={this.props.start.bind(this)} className="btn btn-primary"> <i className="fa fa-play" aria-hidden="true"></i></button>
       );
   }
 }
@@ -154,7 +165,7 @@ class PlayButton extends Component {
 class StopButton extends Component {
   render() {
       return (
-        <button onClick={this.props.stop} className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
+        <button onClick={this.props.stop.bind(this)} className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
       );
   }
 }
