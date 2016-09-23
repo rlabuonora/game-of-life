@@ -2,6 +2,12 @@
 import React, { Component } from 'react';
 import './App.css';
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +17,15 @@ class App extends Component {
 		    on: false,
 		    data: initialGrid
                  };
+  }
+
+  indexInBounds(i, j) {
+      return (i>=0 && i<this.props.rows-1) && (j>=0 && j<this.props.cols-1);
+  }
+  neighbors(i,j) {
+    // TODO: fail if out of bounds
+    var result = [];
+    
   }
   simulate(oldGrid) { // solves for the next grid (brute force)
     // for every cell
@@ -79,9 +94,16 @@ class App extends Component {
   }
 
   tick() {
-    console.log("This: " + this);
     var t = this.state.t + 1;
-    this.setState({ t : t });
+
+    // testing:
+    var i = getRandomInt(0, 30);
+    var j = getRandomInt(0, 50);
+    var new_grid = this.toggleCell(this.state.data, i, j)
+
+    this.setState({ t : t,
+                    data: new_grid
+                  });
   }
 
   render() {
