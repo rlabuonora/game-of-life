@@ -1,5 +1,8 @@
+
 import React, { Component } from 'react';
 import './App.css';
+
+
 
 class App extends Component {
   constructor(props) {
@@ -11,24 +14,66 @@ class App extends Component {
 		    data: initialGrid
                  };
   }
-  simulate(oldGrid) { // solves for the next grid (brute force)
-    // for every cell
-    // helper 1: get an array of the cell's neighbors
-    // helper 2: count how many of them are alive
-    // if less than 2: die
-    // if 2 or 3: survive
-    // more than three: die
-    var newGrid = [];
-    return newGrid;
+
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
   }
 
+<<<<<<< HEAD
   tick() {
     // call simulate with the current state
     // update to the new state
     console.log(this);
     var current_t = this.state.t;
     this.setState({ t: current_t += 1});
+=======
+  neighbors(i,j) {
+    var result = [];
+    for (var offset_1 = -1; offset_1 <= 1; offset_1++) {
+      for (var offset_2 = -1; offset_2 <= 1; offset_2 ++) {
+	if (!(offset_1 === 0 && offset_2 === 0) && this.indexInBounds(i+offset_1, j+offset_2))
+	    result.push({x: i+offset_1, y: j+offset_2});
+      }
+    }
+    return result;
+>>>>>>> finish
   }
+
+  liveNeighbors(i, j) {
+    var neighs = this.neighbors(i,j)
+    var live = neighs.map(function(coords) { return this.state.data[coords.x][coords.y] }.bind(this))
+	  .reduce(function(acc, elt) {return elt ? acc+1 : acc}, 0);
+
+    return live;
+  }
+
+  indexInBounds(i, j) {
+      return (i>=0 && i<this.props.rows-1) && (j>=0 && j<this.props.cols-1);
+  }
+
+  step(oldGrid) { // solves for the next grid (brute force)
+    var newGrid = this.emptyGrid();
+
+    for (var i = 0; i < this.props.rows; i++) {
+      for (var j = 0; j < this.props.cols; j++) {
+        var live = this.liveNeighbors(i, j);
+
+	// if it is alive
+        if (oldGrid[i][j]) {
+
+	  newGrid[i][j] = (live === 3 || live === 2);
+        }
+        // if it is dead
+        else {
+	  newGrid[i][j] = (live === 3);
+        }
+      }
+    }
+    return newGrid;
+  }
+
   toggleCell(nested_arr, i, j) {
     return nested_arr.map(function(arr, idx) {
       if (idx !== i) return arr;
@@ -39,8 +84,11 @@ class App extends Component {
     })
   }
 
-  emptyGrid(width, height) {
+  emptyGrid() { // should not take args!
     // create an array of false
+    var width = this.props.cols;
+    var height = this.props.rows;
+    console.log("W: " + width+ "H: " + height);
     var a = new Array(height);
     for (var i = 0; i < height; i++) { 
       a[i] = new Array(width);
@@ -50,13 +98,22 @@ class App extends Component {
     }
     return a;
   }
+
   handleClick(x, y) {
     var new_data = this.toggleCell(this.state.data, x, y);
     this.setState({ data: new_data });
 
   }
+  handlePlay() {
+    if (this.state.on) {
+      this.pause();
+    } else {
+      this.start();
+    }
+  }
   stop() {
     var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
+<<<<<<< HEAD
     this.setState({ t: 0, 
 		    data: initialGrid });
     clearInterval(this.state.interval);
@@ -65,6 +122,34 @@ class App extends Component {
     console.log(this);
     var interval = setInterval(this.tick.bind(this), this.props.speed);
     this.setState({interval: interval});  
+=======
+    clearInterval(this.state.intervalId);
+    this.setState({ 
+        on: false,
+	t: 0,
+	data: initialGrid,
+    });
+  }
+  start() {
+    var intervalId = setInterval(this.tick.bind(this), this.props.speed);
+    this.setState({ on: true, 
+	            intervalId: intervalId });
+  }
+
+  pause() {
+    clearInterval(this.state.intervalId);
+    this.setState({ on: false });
+  }
+
+  tick() {
+    var t = this.state.t + 1;
+    var grid = this.state.data;
+    var newGrid = this.step(grid);
+    console.log(newGrid);
+    this.setState({ t : t,
+                    data: newGrid
+                  });
+>>>>>>> finish
   }
 
   render() {
@@ -78,7 +163,11 @@ class App extends Component {
                 <Grid handleClick={this.handleClick.bind(this)} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
 	    </div>
 	    <div className="row">
+<<<<<<< HEAD
 		<StartButton start={this.start.bind(this)} />
+=======
+		<PlayButton onClick={this.handlePlay.bind(this)} on={this.state.on} />
+>>>>>>> finish
 		<StopButton stop={this.stop.bind(this)} />
 		<ShuffleButton />
 	    </div>
@@ -154,10 +243,23 @@ class Cell extends Component {
   }
 }
 
+<<<<<<< HEAD
 class StartButton extends Component {
   render() {
       return (
         <button onClick={this.props.start.bind(this)} className="btn btn-primary"> <i className="fa fa-play" aria-hidden="true"></i></button>
+=======
+class PlayButton extends Component {
+
+  icon() {
+      return this.props.on ? 
+	  <i className="fa fa-pause" aria-hidden="true"></i> :
+	  <i className="fa fa-play" aria-hidden="true"></i>
+  }
+  render() {
+      return (
+        <button onClick={this.props.onClick.bind(this)} className="btn btn-primary"> {this.icon() } </button>
+>>>>>>> finish
       );
   }
 }
@@ -165,7 +267,13 @@ class StartButton extends Component {
 class StopButton extends Component {
   render() {
       return (
+<<<<<<< HEAD
         <button onClick={this.props.stop.bind(this)} className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
+=======
+        <button onClick={this.props.stop} className="btn btn-primary"> 
+	      <i className="fa fa-stop" aria-hidden="true"></i>
+	</button>
+>>>>>>> finish
       );
   }
 }
