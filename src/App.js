@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import './App.css';
 
@@ -21,10 +22,6 @@ class App extends Component {
     var newGrid = [];
     return newGrid;
   }
-  tick() {
-    // call simulate with the current state
-    // update to the new state
-  }
   toggleCell(nested_arr, i, j) {
     return nested_arr.map(function(arr, idx) {
       if (idx !== i) return arr;
@@ -46,14 +43,45 @@ class App extends Component {
     }
     return a;
   }
+
   handleClick(x, y) {
     var new_data = this.toggleCell(this.state.data, x, y);
     this.setState({ data: new_data });
 
   }
+  handlePlay() {
+    console.log("handle play");
+    console.log(this);
+    if (this.state.on) {
+      this.pause();
+    } else {
+      this.start();
+    }
+  }
   stop() {
     var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
-    this.setState({ data: initialGrid });
+    clearInterval(this.state.intervalId);
+    this.setState({ 
+        on: false,
+	t: 0,
+	data: initialGrid,
+    });
+  }
+  start() {
+    var intervalId = setInterval(this.tick.bind(this), this.props.speed);
+    this.setState({ on: true, 
+	            intervalId: intervalId });
+  }
+
+  pause() {
+    clearInterval(this.state.intervalId);
+    this.setState({ on: false });
+  }
+
+  tick() {
+    console.log("This: " + this);
+    var t = this.state.t + 1;
+    this.setState({ t : t });
   }
 
   render() {
@@ -67,7 +95,7 @@ class App extends Component {
                 <Grid handleClick={this.handleClick.bind(this)} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
 	    </div>
 	    <div className="row">
-		<PlayButton />
+		<PlayButton onClick={this.handlePlay.bind(this)} on={this.state.on} />
 		<StopButton stop={this.stop.bind(this)} />
 		<ShuffleButton />
 	    </div>
@@ -144,9 +172,15 @@ class Cell extends Component {
 }
 
 class PlayButton extends Component {
+
+  icon() {
+      return this.props.on ? 
+	  <i className="fa fa-pause" aria-hidden="true"></i> :
+	  <i className="fa fa-play" aria-hidden="true"></i>
+  }
   render() {
       return (
-        <button className="btn btn-primary"> <i className="fa fa-play" aria-hidden="true"></i></button>
+        <button onClick={this.props.onClick.bind(this)} className="btn btn-primary"> {this.icon() } </button>
       );
   }
 }
@@ -154,7 +188,9 @@ class PlayButton extends Component {
 class StopButton extends Component {
   render() {
       return (
-        <button onClick={this.props.stop} className="btn btn-primary"> <i className="fa fa-stop" aria-hidden="true"></i></button>
+        <button onClick={this.props.stop} className="btn btn-primary"> 
+	      <i className="fa fa-stop" aria-hidden="true"></i>
+	</button>
       );
   }
 }
