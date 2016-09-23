@@ -2,11 +2,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
+
 
 class App extends Component {
   constructor(props) {
@@ -19,24 +15,56 @@ class App extends Component {
                  };
   }
 
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  neighbors(i,j) {
+    var result = [];
+    for (var offset_1 = -1; offset_1 <= 1; offset_1++) {
+      for (var offset_2 = -1; offset_2 <= 1; offset_2 ++) {
+	if (!(offset_1 === 0 && offset_2 === 0) && this.indexInBounds(i+offset_1, j+offset_2))
+	    result.push({x: i+offset_1, y: j+offset_2});
+      }
+    }
+    return result;
+  }
+
+  liveNeighbors(i, j) {
+    var neighs = this.neighbors(i,j)
+    var live = neighs.map(function(coords) { return this.state.data[coords.x][coords.y] }.bind(this))
+	  .reduce(function(acc, elt) {return elt ? acc+1 : acc}, 0);
+
+    return live;
+  }
+
   indexInBounds(i, j) {
       return (i>=0 && i<this.props.rows-1) && (j>=0 && j<this.props.cols-1);
   }
-  neighbors(i,j) {
-    // TODO: fail if out of bounds
-    var result = [];
-    
-  }
-  simulate(oldGrid) { // solves for the next grid (brute force)
-    // for every cell
-    // helper 1: get an array of the cell's neighbors
-    // helper 2: count how many of them are alive
-    // if less than 2: die
-    // if 2 or 3: survive
-    // more than three: die
-    var newGrid = [];
+
+  step(oldGrid) { // solves for the next grid (brute force)
+    var newGrid = this.emptyGrid();
+
+    for (var i = 0; i < this.props.rows; i++) {
+      for (var j = 0; j < this.props.cols; j++) {
+        var live = this.liveNeighbors(i, j);
+
+	// if it is alive
+        if (oldGrid[i][j]) {
+
+	  newGrid[i][j] = (live === 3 || live === 2);
+        }
+        // if it is dead
+        else {
+	  newGrid[i][j] = (live === 3);
+        }
+      }
+    }
     return newGrid;
   }
+
   toggleCell(nested_arr, i, j) {
     return nested_arr.map(function(arr, idx) {
       if (idx !== i) return arr;
@@ -47,8 +75,11 @@ class App extends Component {
     })
   }
 
-  emptyGrid(width, height) {
+  emptyGrid() { // should not take args!
     // create an array of false
+    var width = this.props.cols;
+    var height = this.props.rows;
+    console.log("W: " + width+ "H: " + height);
     var a = new Array(height);
     for (var i = 0; i < height; i++) { 
       a[i] = new Array(width);
@@ -65,8 +96,6 @@ class App extends Component {
 
   }
   handlePlay() {
-    console.log("handle play");
-    console.log(this);
     if (this.state.on) {
       this.pause();
     } else {
@@ -95,14 +124,11 @@ class App extends Component {
 
   tick() {
     var t = this.state.t + 1;
-
-    // testing:
-    var i = getRandomInt(0, 30);
-    var j = getRandomInt(0, 50);
-    var new_grid = this.toggleCell(this.state.data, i, j)
-
+    var grid = this.state.data;
+    var newGrid = this.step(grid);
+    console.log(newGrid);
     this.setState({ t : t,
-                    data: new_grid
+                    data: newGrid
                   });
   }
 
