@@ -1,8 +1,4 @@
 [Conway's Game of Life] (http://www.math.cornell.edu/~lipa/mec/lesson6.html)
 
-See it running on [my personal website] (rlabuonora.com)
+See it running on [my personal website] (http://www.rlabuonora.com/game-of-life)
 
-To run locally:
-
-$ git clone
-$ npm install

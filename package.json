@@ -1,7 +1,7 @@
 {
   "name": "game-of-life",
   "version": "0.1.0",
-  "homepage": "http://rlabuonora.com/game-of-life"
+  "homepage": "http://rlabuonora.com/game-of-life",
   "private": true,
   "devDependencies": {
     "react-scripts": "0.4.3"
