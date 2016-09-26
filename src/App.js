@@ -5,7 +5,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
-    initialGrid = this.toggleCell(initialGrid, 0, 1);
     this.state = {  t: 0,
 		    on: false,
 		    data: initialGrid
