@@ -2,3 +2,4 @@
 
 See it running on [my personal website] (http://www.rlabuonora.com/game-of-life)
 
+Added speed control.© alexgnatrow
