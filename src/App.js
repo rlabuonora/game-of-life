@@ -5,18 +5,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     var initialGrid = this.emptyGrid(this.props.cols, this.props.rows);
-    this.state = {  t: 0,
-		    on: false,
-		    data: initialGrid
-                 };
+      this.state = {
+	  t: 0,
+	  on: false,
+	  data: initialGrid
+      };
   }
-
-  getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
-  neighbors(i,j) {
+    
+  neighbors(i,j) { // devuelve un array con los vecinos de la cell(i, j)
     var result = [];
     for (var offset_1 = -1; offset_1 <= 1; offset_1++) {
       for (var offset_2 = -1; offset_2 <= 1; offset_2 ++) {
@@ -27,28 +23,32 @@ class App extends Component {
     return result;
   }
 
-  liveNeighbors(i, j) {
+  liveNeighbors(i, j) { // devuelve cuantos vecinos vivos tiene la cell(i, j)
     var neighs = this.neighbors(i,j)
-    var live = neighs.map(function(coords) { return this.state.data[coords.x][coords.y] }.bind(this))
+      var live = neighs
+	  .map(function(coords) {
+	      return this.state.data[coords.x][coords.y]
+	  }
+	  .bind(this))
 	  .reduce(function(acc, elt) {return elt ? acc+1 : acc}, 0);
 
     return live;
   }
-
-  indexInBounds(i, j) {
-      return (i>=0 && i<this.props.rows-1) && (j>=0 && j<this.props.cols-1);
+  indexInBounds(i, j) { // Helper para calcular los neighbors
+      return (i >= 0 && i < this.props.rows-1) &&
+	  (j>=0 && j<this.props.cols-1);
   }
 
-  step(oldGrid) { // solves for the next grid (brute force)
+  step(oldGrid) { // calcula la grid(t+1) en base a grid(t) iterando por todas las cells
     var newGrid = this.emptyGrid();
     for (var i = 0; i < this.props.rows; i++) {
       for (var j = 0; j < this.props.cols; j++) {
         var live = this.liveNeighbors(i, j);
-	// if it is alive
+	// si la cell(i, j) esta viva
         if (oldGrid[i][j]) {
 	  newGrid[i][j] = (live === 3 || live === 2);
         }
-        // if it is dead
+        // si la cell(i, j) esta muerta
         else {
 	  newGrid[i][j] = (live === 3);
         }
@@ -70,8 +70,8 @@ class App extends Component {
   emptyGrid() { 
     var width = this.props.cols;
     var height = this.props.rows;
-    console.log("W: " + width+ "H: " + height);
     var a = new Array(height);
+      
     for (var i = 0; i < height; i++) { 
       a[i] = new Array(width);
       for (var j = 0; j < width; j++) {
@@ -103,7 +103,8 @@ class App extends Component {
     });
   }
   start() {
-    var intervalId = setInterval(this.tick.bind(this), this.props.speed);
+      var intervalId = setInterval(this.tick.bind(this),
+				   this.props.speed);
     this.setState({ on: true, 
 	            intervalId: intervalId });
   }
@@ -117,10 +118,11 @@ class App extends Component {
     var t = this.state.t + 1;
     var grid = this.state.data;
     var newGrid = this.step(grid);
-    console.log(newGrid);
-    this.setState({ t : t,
-                    data: newGrid
-                  });
+
+      this.setState({
+	  t : t,
+          data: newGrid
+      });
   }
 
   render() {
@@ -131,12 +133,18 @@ class App extends Component {
 	      <Generation t={this.state.t} />
 	    </div>
 	    <div className="row">
-                <Grid handleClick={this.handleClick.bind(this)} data={this.state.data} rows={this.props.rows} cols={this.props.cols} cellSize={15} />
+            <Grid handleClick={this.handleClick.bind(this)}
+	          data={this.state.data}
+                  rows={this.props.rows}
+     	          cols={this.props.cols}
+               	  cellSize={15}
+	    />
 	    </div>
 	    <div className="row">
-		<PlayButton onClick={this.handlePlay.bind(this)} on={this.state.on} />
-		<StopButton stop={this.stop.bind(this)} />
-		<ShuffleButton />
+	      <PlayButton onClick={this.handlePlay.bind(this)}
+	                on={this.state.on} />
+              <StopButton stop={this.stop.bind(this)} />
+  	      <ShuffleButton />
 	    </div>
 	</div>
       </div>
@@ -165,16 +173,22 @@ class Grid extends Component {
       this.props.data.forEach(function(row, i) {
 	  row.forEach(function(cell, j) {
 	    cells.push(<Cell 
-		       handleClick={this.props.handleClick.bind(this)}
-		       live={cell} cellSize={this.props.cellSize} coords={ {x:i, y:j} } key={ i + ", " + j } />);
+		         handleClick={this.props.handleClick.bind(this)}
+		         live={cell}
+		         cellSize={this.props.cellSize}
+		         coords={ {x:i, y:j} }
+		         key={ i + ", " + j }
+		       />);
 	  }.bind(this));
       }.bind(this));
       var dims = this.getDims();
       return (
-        <svg width={dims.width} height={dims.height} version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <svg width={dims.width}
+	           height={dims.height}
+      	           version="1.1"
+	           xmlns="http://www.w3.org/2000/svg">
 	      { cells }
-	</svg>
-      );
+	      </svg>);
   }
 }
 
@@ -183,7 +197,7 @@ class Cell extends Component {
       return this.props.live ? "black" : "white";
   }
   getSVGPos() { 
-  // transform grid coordinates (same as boolean array) to SVG coordinates per
+  // Transforma las coordenadas de la grilla a coordenadas del SVG
   // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Positions
       var svg_x_pos = this.props.coords.y * this.props.cellSize
       var svg_y_pos = this.props.coords.x * this.props.cellSize
@@ -219,7 +233,9 @@ class PlayButton extends Component {
   }
   render() {
       return (
-        <button onClick={this.props.onClick.bind(this)} className="btn btn-primary"> {this.icon() } </button>
+              <button onClick={this.props.onClick.bind(this)}
+	              className="btn btn-primary"> {this.icon() }
+	      </button>
       );
   }
 }
@@ -227,9 +243,10 @@ class PlayButton extends Component {
 class StopButton extends Component {
   render() {
       return (
-        <button onClick={this.props.stop} className="btn btn-primary"> 
-	      <i className="fa fa-stop" aria-hidden="true"></i>
-	</button>
+              <button onClick={this.props.stop}
+	              className="btn btn-primary"> 
+	        <i className="fa fa-stop" aria-hidden="true"></i>
+	      </button>
       );
   }
 }
