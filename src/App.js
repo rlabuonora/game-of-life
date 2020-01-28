@@ -137,14 +137,13 @@ class App extends Component {
 	          data={this.state.data}
                   rows={this.props.rows}
      	          cols={this.props.cols}
-               	  cellSize={15}
+               	  cellSize={25}
 	    />
 	    </div>
 	    <div className="row">
 	      <PlayButton onClick={this.handlePlay.bind(this)}
 	                on={this.state.on} />
               <StopButton stop={this.stop.bind(this)} />
-  	      <ShuffleButton />
 	    </div>
 	</div>
       </div>
@@ -247,14 +246,6 @@ class StopButton extends Component {
 	              className="btn btn-primary"> 
 	        <i className="fa fa-stop" aria-hidden="true"></i>
 	      </button>
-      );
-  }
-}
-
-class ShuffleButton extends Component {
-  render() {
-      return (
-        <button className="btn btn-primary"> <i className="fa fa-random" aria-hidden="true"></i></button>
       );
   }
 }
